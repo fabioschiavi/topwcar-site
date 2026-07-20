@@ -1,6 +1,5 @@
 .claude/
-*.jpeg
 .playwright-mcp/
-
-.vercel
-.env*
+.github/
+*.jpeg
+*.md
