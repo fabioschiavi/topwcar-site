@@ -71,36 +71,17 @@ function setStep(i) {
   ghosts.forEach((g, j) => g.classList.toggle("active", i === j));
 }
 
-const mm = gsap.matchMedia();
-
-/* ═══ DESKTOP: coreografia completa com pin ═══ */
-mm.add("(min-width: 881px)", () => {
-  /* hero parallax exit */
-  gsap.timeline({
-    scrollTrigger: {
-      trigger: ".hero",
-      start: "top top",
-      end: "bottom top",
-      scrub: 0.6,
-    },
-  })
-    .to(".hero-inner", { y: -110, opacity: 0, ease: "none" }, 0)
-    .to(".hero-car-wrap", { y: 60, scale: 1.06, ease: "none" }, 0)
-    .to(".beam", { opacity: 0, ease: "none" }, 0)
-    .to(".scroll-hint", { opacity: 0, ease: "none" }, 0);
-
-  /* cinema: a 911 conduz o scroll */
+/* as 4 fases da 911 — usada no desktop (com pin) e no mobile (seção sticky) */
+function buildCineTimeline(stConfig) {
   const cine = gsap.timeline({
     scrollTrigger: {
       trigger: ".cinema",
-      start: "top top",
-      end: "+=4200",
-      pin: ".cinema-pin",
       scrub: 1,
       onUpdate: (self) => {
         gsap.set(".cinema-progress .bar", { scaleX: self.progress });
         setStep(Math.min(3, Math.floor(self.progress * 4)));
       },
+      ...stConfig,
     },
     defaults: { ease: "none" },
   });
@@ -136,6 +117,29 @@ mm.add("(min-width: 881px)", () => {
       { x: "130%", duration: 0.55, ease: "power1.inOut" }, 3.5)
     .to({}, { duration: 0.25 }); /* respiro final */
 
+  return cine;
+}
+
+const mm = gsap.matchMedia();
+
+/* ═══ DESKTOP: coreografia completa com pin ═══ */
+mm.add("(min-width: 881px)", () => {
+  /* hero parallax exit */
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: ".hero",
+      start: "top top",
+      end: "bottom top",
+      scrub: 0.6,
+    },
+  })
+    .to(".hero-inner", { y: -110, opacity: 0, ease: "none" }, 0)
+    .to(".hero-car-wrap", { y: 60, scale: 1.06, ease: "none" }, 0)
+    .to(".beam", { opacity: 0, ease: "none" }, 0)
+    .to(".scroll-hint", { opacity: 0, ease: "none" }, 0);
+
+  buildCineTimeline({ start: "top top", end: "+=4200", pin: ".cinema-pin" });
+
   /* galeria horizontal pinada */
   const track = document.querySelector(".gallery-track");
   if (track) {
@@ -155,21 +159,10 @@ mm.add("(min-width: 881px)", () => {
   }
 });
 
-/* ═══ MOBILE: sem pin — fluxo linear com reveals suaves ═══ */
+/* ═══ MOBILE: mesma cena, mas o palco gruda via position:sticky do CSS —
+   sem pin JS, que era o que sobrepunha as seções no iOS ═══ */
 mm.add("(max-width: 880px)", () => {
-  setStep(-1); /* nenhum passo escondido pelo estado do desktop */
-
-  gsap.from(".cinema-stage", {
-    opacity: 0, x: 70, duration: 1, ease: "power3.out",
-    scrollTrigger: { trigger: ".cinema-stage", start: "top 85%" },
-  });
-
-  steps.forEach((s) => {
-    gsap.from(s, {
-      opacity: 0, y: 40, duration: 0.9, ease: "power3.out",
-      scrollTrigger: { trigger: s, start: "top 88%" },
-    });
-  });
+  buildCineTimeline({ start: "top top", end: "bottom bottom" });
 });
 
 /* ─────────── reveal genérico ─────────── */

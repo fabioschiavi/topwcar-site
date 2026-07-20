@@ -723,47 +723,33 @@ a { color: inherit; text-decoration: none; }
 /* ─────────── reveal helpers ─────────── */
 .reveal-up { opacity: 0; transform: translateY(34px); }
 
-/* imagens de detalhe dentro dos passos: só no mobile */
-.step-img { display: none; }
-
-/* ─────────── responsive: mobile sem pin, fluxo linear ─────────── */
+/* ─────────── responsive: mobile com cena sticky (sem pin JS) ─────────── */
 @media (max-width: 880px) {
   .nav-links { display: none; }
 
-  /* cena da 911: seções empilhadas, sem fixação */
+  /* cena da 911: a seção é alta e o palco gruda via sticky nativo,
+     que o iOS trata sem as falhas do pinning por position:fixed */
+  .cinema { height: 440vh; height: 440svh; }
   .cinema-pin {
-    height: auto;
-    display: block;
-    overflow: visible;
-    padding: 90px 24px 20px;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    height: 100vh; height: 100svh;
+    overflow: hidden;
+    padding: 84px 24px 44px;
+    gap: 12px;
   }
-  .ghost-nums, .cinema-progress, .shine { display: none; }
-  .cinema-stage {
-    height: min(34vh, 300px);
-    margin-bottom: 48px;
-  }
-  .car { position: static; }
-  .car-b, .car-c { display: none; }
-  .cinema-copy { min-height: 0; }
-  .step {
-    position: static;
-    transform: none;
-    opacity: 1;
-    visibility: visible;
-    transition: none;
-    text-align: center;
-    margin-bottom: 78px;
-  }
-  .step-text { margin: 0 auto; }
+  .cinema-stage { height: min(34vh, 300px); flex: none; }
+  .cinema-copy { min-height: 290px; flex: none; }
+  .step { text-align: center; }
+  .step-text { margin: 0 auto; font-size: 14px; }
   .swatches { justify-content: center; }
-  .step-img {
-    display: block;
-    max-height: 190px;
-    width: auto;
-    max-width: 100%;
-    margin: 28px auto 0;
-    filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.55));
-  }
+  .ghost { font-size: 52vw; }
+  .ghost-nums { left: -3vw; }
+  .cinema-progress { bottom: 16px; }
 
   /* galeria: swipe nativo com snap */
   .gallery-pin {
