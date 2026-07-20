@@ -6,10 +6,16 @@
 gsap.registerPlugin(ScrollTrigger);
 
 const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 
-/* ─────────── smooth scroll ─────────── */
+/* celular: barra de endereço esconde/mostra ≠ refresh (evita pulos nas seções pinadas) */
+ScrollTrigger.config({ ignoreMobileResize: true });
+/* iOS/Android: scroll normalizado elimina o jitter do pin no toque */
+if (isTouch && !prefersReduced) ScrollTrigger.normalizeScroll(true);
+
+/* ─────────── smooth scroll (só desktop; no toque o nativo é melhor) ─────────── */
 let lenis = null;
-if (!prefersReduced) {
+if (!prefersReduced && !isTouch) {
   lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
@@ -194,6 +200,16 @@ gsap.utils.toArray(".count").forEach((el) => {
       scrollTrigger: { trigger: el, start: "top 88%" },
     });
 });
+
+/* ─────────── failsafe: nunca deixar a tela presa no preloader ─────────── */
+setTimeout(() => {
+  const p = document.getElementById("preloader");
+  if (p) {
+    p.remove();
+    document.body.classList.add("anim-failsafe");
+    ScrollTrigger.refresh();
+  }
+}, 6000);
 
 /* ─────────── âncoras com Lenis ─────────── */
 document.querySelectorAll('a[href^="#"]').forEach((a) => {
