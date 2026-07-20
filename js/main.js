@@ -141,20 +141,21 @@ gsap.utils.toArray(".reveal-up").forEach((el) => {
 
 /* ─────────── galeria horizontal ─────────── */
 const track = document.querySelector(".gallery-track");
-const galleryScroll = () => -(track.scrollWidth - window.innerWidth + 60);
-
-gsap.to(track, {
-  x: galleryScroll,
-  ease: "none",
-  scrollTrigger: {
-    trigger: ".gallery",
-    start: "top top",
-    end: () => "+=" + Math.abs(galleryScroll()),
-    pin: ".gallery-pin",
-    scrub: 1,
-    invalidateOnRefresh: true,
-  },
-});
+if (track) {
+  const galleryScroll = () => -(track.scrollWidth - window.innerWidth + 60);
+  gsap.to(track, {
+    x: galleryScroll,
+    ease: "none",
+    scrollTrigger: {
+      trigger: ".gallery",
+      start: "top top",
+      end: () => "+=" + Math.abs(galleryScroll()),
+      pin: ".gallery-pin",
+      scrub: 1,
+      invalidateOnRefresh: true,
+    },
+  });
+}
 
 /* ─────────── quote: palavra por palavra ─────────── */
 const quote = document.querySelector(".quote-line");
